@@ -12,8 +12,8 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 
 
 # Initialize environment variables
-# _ = load_dotenv()
-# huggingfacehub_api_token = os.environ.get("HUGGINGFACE_API_KEY")
+_ = load_dotenv()
+huggingfacehub_api_token = os.environ.get("HUGGINGFACE_API_KEY")
 
 
 # Initialize Tavily Search
@@ -80,27 +80,24 @@ If you need to look up some information before asking a follow up question, you 
 """
 
 print("Initialize LLM model...")
-model = ChatOpenAI(model="gpt-3.5-turbo")  #reduce inference cost
-# llm_model = "microsoft/Phi-3.5-mini-instruct"
-# llm = HuggingFaceEndpoint(
-#             repo_id=llm_model, 
-#             task="text-generation",
-#             temperature = 0.7,
-#             max_new_tokens = 1024,
-#             top_k = 1,
-#             do_sample=False,
-#             huggingfacehub_api_token=huggingfacehub_api_token,
-#         )
-# model = ChatHuggingFace(llm=llm)
+#model = ChatOpenAI(model="gpt-3.5-turbo")  #reduce inference cost
+llm_model = "microsoft/Phi-3.5-mini-instruct"
+llm = HuggingFaceEndpoint(
+            repo_id=llm_model, 
+            task="text-generation",
+            temperature = 0.7,
+            max_new_tokens = 1024,
+            top_k = 1,
+            do_sample=False,
+            huggingfacehub_api_token=huggingfacehub_api_token,
+        )
+model = ChatHuggingFace(llm=llm)
 
 
 print("Initialize AI agent...")
 abot = Agent(model, [tool], system=prompt)
 
 
-
-# from IPython.display import Image
-# Image(abot.graph.get_graph().draw_png())
 
 print("AI agent - inference...")
 messages = [HumanMessage(content="What is the weather in sf?")]
