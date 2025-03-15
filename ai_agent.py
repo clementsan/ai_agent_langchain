@@ -149,7 +149,7 @@ def main(args=None):
 
     print("Initialize LLM model...")
 
-    llm = None
+    chat_model = None
     if args.llm_type == "openai":
         chat_model = ChatOpenAI(
             # reduce inference cost
