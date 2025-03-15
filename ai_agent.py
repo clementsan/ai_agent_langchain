@@ -32,7 +32,7 @@ class Agent:
         """Initialization with cyclic graph"""
         self.system = system
         graph = StateGraph(AgentState)
-        graph.add_node("llm", self.call_openai)
+        graph.add_node("llm", self.call_llm)
         graph.add_node("action", self.take_action)
         graph.add_conditional_edges(
             "llm", self.exists_action, {True: "action", False: END}
@@ -48,8 +48,8 @@ class Agent:
         result = state["messages"][-1]
         return len(result.tool_calls) > 0
 
-    def call_openai(self, state: AgentState):
-        """Call openai llm"""
+    def call_llm(self, state: AgentState):
+        """Call llm"""
         messages = state["messages"]
         if self.system:
             messages = [SystemMessage(content=self.system)] + messages
