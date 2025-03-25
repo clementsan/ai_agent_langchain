@@ -183,12 +183,14 @@ def main(args=None):
     print("Initialize AI agent...")
     # Add persistence (in-memory database)
     memory = SqliteSaver.from_conn_string(":memory:")
-    abot = Agent(chat_model, [tool], system=prompt)
+    abot = Agent(chat_model, [tool], checkpointer=memory, system=prompt)
 
     print("\nAI Chatbot")
     prompt = input(" Enter your prompt: ")
+    
     messages = [HumanMessage(content=prompt)]
 
+    # No streaming
     result = abot.graph.invoke({"messages": messages})
     print("\n\nFull result: ", result)
 
