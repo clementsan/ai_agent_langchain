@@ -182,20 +182,26 @@ def main(args=None):
     # Initialize AI Agent
     print("Initialize AI agent...")
     # Add persistence (in-memory database)
-    memory = SqliteSaver.from_conn_string(":memory:")
-    abot = Agent(chat_model, [tool], checkpointer=memory, system=prompt)
+    with SqliteSaver.from_conn_string(":memory:") as memory:
+        abot = Agent(chat_model, [tool], checkpointer=memory, system=prompt)
 
-    print("\nAI Chatbot")
-    prompt = input(" Enter your prompt: ")
+        print("\nAI Chatbot")
+        prompt = input(" Enter your prompt: ")
     
-    messages = [HumanMessage(content=prompt)]
+        messages = [HumanMessage(content=prompt)]
 
-    # No streaming
-    result = abot.graph.invoke({"messages": messages})
-    print("\n\nFull result: ", result)
+        # No streaming
+        thread = {"configurable": {"thread_id": "1"}}
+        result = abot.graph.invoke({"messages": messages}, thread)
+        print("\n\nFull result: ", result)
 
-    final_answer = result["messages"][-1].content
-    print("\n\nFinal chatbot answer: ", final_answer)
+        # With streaming
+        # for event in abot.graph.stream({"messages": messages}, thread):
+        #     for v in event.values():
+        #         print(v['messages'])
+
+        # final_answer = result["messages"][-1].content
+        # print("\n\nFinal chatbot answer: ", final_answer)
 
 
 if __name__ == "__main__":
