@@ -191,17 +191,20 @@ def main(args=None):
         messages = [HumanMessage(content=prompt)]
 
         # No streaming
-        thread = {"configurable": {"thread_id": "1"}}
-        result = abot.graph.invoke({"messages": messages}, thread)
-        print("\n\nFull result: ", result)
-
-        # With streaming
-        # for event in abot.graph.stream({"messages": messages}, thread):
-        #     for v in event.values():
-        #         print(v['messages'])
+        # thread = {"configurable": {"thread_id": "1"}}
+        # result = abot.graph.invoke({"messages": messages}, thread)
+        # print("\n\nFull result: ", result)
 
         # final_answer = result["messages"][-1].content
         # print("\n\nFinal chatbot answer: ", final_answer)
+
+        # With streaming
+        thread = {"configurable": {"thread_id": "1"}}
+        for event in abot.graph.stream({"messages": messages}, thread):
+            for v in event.values():
+                print(v['messages'])
+        
+
 
 
 if __name__ == "__main__":
