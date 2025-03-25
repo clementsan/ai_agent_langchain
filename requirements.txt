@@ -5,3 +5,4 @@ langchain-openai
 langgraph
 huggingface-hub
 python-dotenv
+langgraph-checkpoint-sqlite

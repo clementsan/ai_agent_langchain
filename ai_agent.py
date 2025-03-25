@@ -16,6 +16,7 @@ from langchain_core.messages import AnyMessage, SystemMessage, HumanMessage, Too
 from langchain_openai import ChatOpenAI
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from langchain_community.tools.tavily_search import TavilySearchResults
+from langgraph.checkpoint.sqlite import SqliteSaver
 
 
 # Define AI Agent State
@@ -28,7 +29,7 @@ class AgentState(TypedDict):
 class Agent:
     """Define AI Agent"""
 
-    def __init__(self, model, tools, system=""):
+    def __init__(self, model, tools, checkpointer, system=""):
         """Initialization with cyclic graph"""
         self.system = system
         graph = StateGraph(AgentState)
@@ -39,7 +40,7 @@ class Agent:
         )
         graph.add_edge("action", "llm")
         graph.set_entry_point("llm")
-        self.graph = graph.compile()
+        self.graph = graph.compile(checkpointer=checkpointer)
         self.tools = {t.name: t for t in tools}
         self.model = model.bind_tools(tools)
 
@@ -180,6 +181,8 @@ def main(args=None):
 
     # Initialize AI Agent
     print("Initialize AI agent...")
+    # Add persistence (in-memory database)
+    memory = SqliteSaver.from_conn_string(":memory:")
     abot = Agent(chat_model, [tool], system=prompt)
 
     print("\nAI Chatbot")
